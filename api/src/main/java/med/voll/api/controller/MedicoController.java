@@ -1,14 +1,16 @@
 package med.voll.api.controller;
 
+import jakarta.validation.Valid;
 import med.voll.api.dto.DadosCadastroMedico;
+import med.voll.api.dto.DadosListagemMedico;
 import med.voll.api.entity.MedicoEntity;
 import med.voll.api.repository.MedicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("medicos")
@@ -20,11 +22,12 @@ public class MedicoController {
 
     @PostMapping
     @Transactional
-    public void cadastroMedico(@RequestBody DadosCadastroMedico dadosCadastroMedico){
+    public void cadastrarMedico(@RequestBody @Valid DadosCadastroMedico dadosCadastroMedico){
         medicoRepository.save(new MedicoEntity(dadosCadastroMedico));
-
-
     }
 
-
+    @GetMapping
+    public Page<DadosListagemMedico> listarMedico (Pageable paginacao){
+       return medicoRepository.findAll(paginacao).map(DadosListagemMedico::new);
+    }
 }
